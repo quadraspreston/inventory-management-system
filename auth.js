@@ -6,7 +6,6 @@ const signupToLogin = document.getElementById('signupToLogin');
 const signupForm = document.getElementById('signupForm');
 
 const loginForm = document.getElementById('loginForm');
-const loginRememberMe = document.getElementById('loginRememberMe');
 const loginToSignup = document.getElementById('loginToSignup');
 
 
@@ -69,7 +68,7 @@ loginForm.addEventListener('submit',(event)=>{
 
 //Signup Validation
 
-signupForm.addEventListener('submit', async(event) => {
+signupForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const signupFullName = document.getElementById('signupFullName');
     const signupFullNameFeedback = document.getElementById('signupFullNameFeedback');
@@ -79,10 +78,15 @@ signupForm.addEventListener('submit', async(event) => {
     const signupEmailFeedback = document.getElementById('signupEmailFeedback');
     const signupPasswordFeedback = document.getElementById('signupPasswordFeedback');
     const signupConfirmPasswordFeedback = document.getElementById('signupConfirmPasswordFeedback');
+    signupFullNameFeedback.style.opacity = 0;
+    signupEmailFeedback.style.opacity = 0;
+    signupPasswordFeedback.style.opacity = 0;
+    signupConfirmPasswordFeedback.style.opacity = 0;
 
+    setTimeout(async() =>{
     let isError = false;
     if(!signupEmail.validity.valid)
-    {
+    {   signupEmailFeedback.style.opacity = 1;
         signupEmailFeedback.textContent=signupEmail.validationMessage;
         signupEmail.classList.add('error');
         isError =true;
@@ -94,12 +98,13 @@ signupForm.addEventListener('submit', async(event) => {
 
 
     if(!signupPassword.validity.valid)
-      {  signupPasswordFeedback.textContent=signupPassword.validationMessage;
+      { signupPasswordFeedback.style.opacity = 1; 
+        signupPasswordFeedback.textContent=signupPassword.validationMessage;
         signupPassword.classList.add('error');
         isError = true;
       }
       else if(signupPassword.value.trim().length<8)
-      {
+      { signupPasswordFeedback.style.opacity = 1;
         signupPasswordFeedback.textContent='Password must be atleast 8 characters long.';
         isError = true;
       }
@@ -110,6 +115,7 @@ signupForm.addEventListener('submit', async(event) => {
 
 
         if(!signupFullName.validity.valid){
+        signupFullNameFeedback.style.opacity = 1;
         signupFullNameFeedback.textContent=signupFullName.validationMessage;
         signupFullName.classList.add('error');
         isError = true;
@@ -121,6 +127,7 @@ signupForm.addEventListener('submit', async(event) => {
 
 
     if(signupConfirmPassword.value.trim()!=signupPassword.value.trim()){
+        signupConfirmPasswordFeedback.style.opacity = 1;
         signupConfirmPasswordFeedback.textContent = 'Passwords do not match.';
         signupConfirmPassword.classList.add('error');
         isError = true;
@@ -156,5 +163,6 @@ signupForm.addEventListener('submit', async(event) => {
     }catch(err){
         alert('Request Failed. Please try again.');
     }
+    },100);
 });
 
