@@ -4,9 +4,9 @@
     <h1>Inventory</h1>
   </div>
   
-<% if (isLoggedIn) {%>
+<% if (session.userId) {%>
   <div class="header-content">
-    <h3>Hello, <% name %></h3>
+    <h3>Hello, <%= session.userName ? session.userName : 'Guest' %></h3>
     <a href="#" class="btn2 btn2-secondary">Logout</a>
   </div>
 <% } else { %>

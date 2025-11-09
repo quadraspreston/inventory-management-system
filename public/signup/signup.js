@@ -73,7 +73,7 @@ signupForm.addEventListener('submit', (event) => {
         return;
     
     const signupData = {
-        fullName:signupFullName.value.trim(),
+        name:signupFullName.value.trim(),
         email:signupEmail.value.trim(),
         password:signupPassword.value.trim()
     };
@@ -85,13 +85,16 @@ signupForm.addEventListener('submit', (event) => {
             body: JSON.stringify(signupData)
         });
         const result = await response.json();
+        if(result.emailExists)
+        {
+            signupEmailFeedback.style.opacity = 1;
+            signupEmailFeedback.textContent = 'Email already exists.';
+            signupEmail.classList.add('error');
+        }
         if(result.success)
         {
             alert('Sign up Successful!');
             signupForm.reset();
-        }
-        else {
-            alert(result.message);
         }
     }catch(err){
         alert('Request Failed. Please try again.');

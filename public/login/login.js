@@ -11,7 +11,8 @@ loginForm.addEventListener('submit',(event)=>{
     loginErrorFeedback.style.opacity = 0;
     setTimeout(async() =>{
         if(!loginEmail.validity.valid||!loginPassword.validity.valid)
-    {   loginErrorFeedback.style.opacity = 1;
+    {   
+        loginErrorFeedback.style.opacity = 1;
         loginErrorFeedback.textContent = 'Please fill in all fields with valid information.';
         return;
     }
@@ -28,16 +29,16 @@ loginForm.addEventListener('submit',(event)=>{
             const result = await response.json();
             if(result.success)
             {
-                loginSection.classList.add('invisible');
-                homeSection.classList.remove('invisible');
+                alert("Login Success");
             }
             else {
-                alert(result.message);
+                loginErrorFeedback.style.opacity = 1;
+                loginErrorFeedback.textContent = 'Incorrect Email or Password.';
                 
             }
         } catch(err)
         {
-                alert('Request Failed. Please try again.'); 
+            alert('Request Failed. Please try again.'); 
             
         }
     },100);
