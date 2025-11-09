@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory | Sign Up</title>
+  <link rel="stylesheet" href="/signup/signup.css" />
+
+</head>
+<body>
+  <!-- Sign Up Section -->
+  <section id="signupSection" class="form-section signup-section">
+    <div class="form-container">
+      <h2>Create Account</h2>
+      <p>Please fill in your details</p>
+
+      <form id="signupForm" class="signup-form" action="/signup" method="POST" novalidate>
+        <label for="signupFullName" class="form-label">Full Name</label>
+        <input type="text" name="name" id="signupFullName" class="form-input signup-fullname" placeholder="Enter your full name" required />
+        <div id ="signupFullNameFeedback" class="feedback"></div>
+
+        <label for="signupEmail" class="form-label">Email address</label>
+        <input type="email" name="email" id="signupEmail" class="form-input signup-email" placeholder="Enter your email" required />
+        <div id="signupEmailFeedback" class="feedback"></div>
+
+        <label for="signupPassword" class="form-label">Password</label>
+        <input type="password" name="password" id="signupPassword" class="form-input signup-password" placeholder="Create a password" required />
+         <div id="signupPasswordFeedback" class="feedback"></div>
+
+        <label for="signupConfirmPassword" class="form-label">Confirm Password</label>
+        <input type="password" id="signupConfirmPassword" class="form-input signup-confirm-password" placeholder="Re-enter your password" required />
+        <div id="signupConfirmPasswordFeedback" class="feedback"></div>
+
+        <button type="submit" id="signupBtn" class="btn signup-btn">Create Account</button>
+      </form>
+
+      <p class="toggle-text">Already have an account? <a href="/login">Sign in</a></p>
+    </div>
+  </section>
+
+  <script src="/signup/signup.js"></script>
+</body>
+</html>

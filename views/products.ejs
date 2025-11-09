@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory | Products</title>
+<link rel="stylesheet" href="/partials/header.css">
+<link rel="stylesheet" href="/products/products.css">
+<link rel="stylesheet" href="/partials/footer.css">
+</head>
+<body>
+    <%- //include('partials/header') %>
+    <section class="product-section" id="productSection">
+        <div class="product-container">
+
+            <h2>My Products</h2>
+
+            <div class="top-bar">
+                <button onclick="addProduct()" class="btn">Add Product</button>
+                  <input type="text" placeholder="Search">
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Retail Rate</th>
+                        <th>Wholesale Rate</th>
+                        <th>Stock</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="productList">
+                    <tr>
+                        <td>Lenovo Smartchoice LOQ AMD Ryzen 7 7435HS, NVIDIA RTX 4050-6GB, 24GB RAM, 512GB SSD, 15.6"/39.6cm, Windows 11, MS Office Home 2024, Grey, 2.4Kg, 83JC00EGIN, 100% sRGB, 3 Mon. Game Pass Gaming Laptop</td>
+                        <td>Laptops</td>
+                        <td>₹1,09,000.00</td>
+                        <td>₹98,000.00</td>
+                        <td>4</td>
+                        <td><button class="btn">+ Image</button></td>
+                        <td>
+                            <div class="dropdown">
+                                <button onclick="openMenu(this)" class="btn small">⋮</button>
+                                <div class="dropdown-menu">
+                                    <a>Edit</a>
+                                    <a>Barcode</a>
+                                    <a class="danger">Delete</a>
+                                </div>
+                            </div>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+<section id="addProductSection" class="form-section add-product-section invisible">
+<div class="form-container">
+    <h2>Add Product</h2>
+
+    <label>Name</label>
+    <input type="text" id="name">
+
+    <label>Description</label>
+    <textarea id="description"></textarea>
+
+    <label>Retail Rate</label>
+    <input type="number" id="retail">
+
+    <label>Wholesale Rate</label>
+    <input type="number" id="wholesale">
+
+    
+
+    
+    <button class="btn" onclick="saveProduct()">Add</button>
+    <button class="btn" onclick="cancel()">Cancel</button>
+</div>
+</section>
+<%- include('partials/footer') %>
+<script src="/products/products.js"></script>
+</body>
+</html>

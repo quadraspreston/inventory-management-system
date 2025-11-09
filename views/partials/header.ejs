@@ -1,0 +1,18 @@
+<header>
+  
+  <div class="header-name"> 
+    <h1>Inventory</h1>
+  </div>
+  
+<% if (isLoggedIn) {%>
+  <div class="header-content">
+    <h3>Hello, <% name %></h3>
+    <a href="#" class="btn2 btn2-secondary">Logout</a>
+  </div>
+<% } else { %>
+    <div class="header-content">
+    <a href="/login" class="btn2 ">Sign In</a>
+    <a href="/signup" class="btn2 btn2-secondary">Sign Up</a>
+  </div>
+<% } %>
+</header>

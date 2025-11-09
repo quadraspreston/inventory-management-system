@@ -1,0 +1,120 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+
+body{
+    background-color: white;
+    line-height: 1.6;
+}
+
+
+.container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 20px;
+    
+}
+
+.landing
+{
+    text-align: center;
+    padding: 80px 0;
+}
+
+.landing h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 16px;
+}
+
+.landing .subtitle {
+    font-size: 1.1rem;
+    color: #6a737a;
+    max-width: 600px;
+    margin: 0 auto 32px;
+}
+
+.landing-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.btn {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    background-color: #1877f2;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    width:200px;
+    border: 1px solid #ccc;
+    
+
+}
+
+.btn:hover {
+    background-color: #0446aa;
+}
+
+.btn-secondary{
+    background-color: #fff;
+    color:black;
+}
+
+.btn-secondary:hover{
+    background-color: #eee;
+}
+
+.features-grid {
+    display: flex;
+    justify-content: center;   
+    align-items: flex-start;   
+    gap: 20px;                 
+    flex-wrap: nowrap;         
+    background-color: white;
+    border-radius: 12px;
+    padding: 40px 0;
+    border-color: #eee;
+}
+
+.feature-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    
+}
+
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+.feature-card p {
+    font-size: 1rem;
+    color: #a49696;
+    margin: 0;
+}
+
+.feature-card:hover, .btn:hover {
+    transform: translateY(-5px); 
+    
+}
+
+
+
+

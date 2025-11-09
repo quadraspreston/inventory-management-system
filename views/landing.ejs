@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>landing page</title>
+    <link rel="stylesheet" href="/partials/header.css">
+    <link rel="stylesheet" href="landing/landing.css">
+    <link rel="stylesheet" href="/partials/footer.css">
+    
+</head>
+<body>
+    <%- //include('partials/header') %>
+    <section class="landing">
+        <div class="container">
+            <h1>Digital Electronics<br>Inventory Management System</h1>
+
+            <p class="subtitle">
+                Streamline your inventory operations with our comprehensive management solution. Track products, manage orders, and monitor transactions all in one place.
+            <div class="landing-buttons">
+                <a href="/login" class="btn"> Sign In</a>
+                <a href="/signup" class=" btn btn-secondary">Create Account</a>
+
+            </div>
+        </div>
+
+    </section>
+
+    <main>
+        <section class="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>Product Management</h3>
+                        <p>Easily manage your electronics inventory with real-time stock tracking</p>
+
+
+                    </div>
+                    <div class="feature-card">
+                        <h3>Trend Monitoring</h3>
+                        <p>Streamline order placement and fulfillment processes</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>Transactions</h3>
+                        <p>Complete visibility of all transactions and order history</p>
+                    </div>    
+
+
+                </div>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>

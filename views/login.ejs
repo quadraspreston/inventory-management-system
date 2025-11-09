@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory | Login</title>
+  <link rel="stylesheet" href="/login/login.css" />
+
+</head>
+<body>
+  <!-- Login Section -->
+  <section id="loginSection" class="form-section login-section">
+    <div class="form-container">
+      <h2>Welcome Back</h2>
+      <p>Please enter your details</p>
+
+      <form id="loginForm" class="login-form" action="/login" method="POST" novalidate>
+        <label for="loginEmail" class="form-label">Email address</label>
+        <input type="email" name="email" id="loginEmail" class="form-input login-email" placeholder="Enter your email" required />
+
+        <label for="loginPassword" class="form-label">Password</label>
+        <input type="password" name="password" id="loginPassword" class="form-input login-password" placeholder="Enter your password" required />
+        <div id="loginErrorFeedback" class="feedback"></div>
+
+        <button type="submit" id="loginBtn" class="btn login-btn">Sign In</button>
+      </form>
+
+      <p class="toggle-text">Don't have an account? <a href="/signup">Sign up</a></p>
+    </div>
+  </section>
+
+  <script src="/login/login.js"></script>
+</body>
+</html>
