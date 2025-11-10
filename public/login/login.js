@@ -29,7 +29,7 @@ loginForm.addEventListener('submit',(event)=>{
             const result = await response.json();
             if(result.success)
             {
-                alert("Login Success");
+                location.href="/products";
             }
             else {
                 loginErrorFeedback.style.opacity = 1;
