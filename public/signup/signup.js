@@ -93,8 +93,7 @@ signupForm.addEventListener('submit', (event) => {
         }
         if(result.success)
         {
-            alert('Sign up Successful!');
-            signupForm.reset();
+            location.href="/products";
         }
     }catch(err){
         alert('Request Failed. Please try again.');

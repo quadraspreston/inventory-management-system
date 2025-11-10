@@ -117,7 +117,11 @@ app.post("/signup",(req,res) =>{
                 }
                 throw err;
             }
+            else {
+            req.session.userId = userId;
+            req.session.userName = name;
             return res.json({ success: true });
+            }
         });
     });
 });
