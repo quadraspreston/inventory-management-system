@@ -7,7 +7,7 @@
 <% if (session.userId) {%>
   <div class="header-content">
     <h3>Hello, <%= session.userName ? session.userName : 'Guest' %></h3>
-    <a href="#" class="btn2 btn2-secondary">Logout</a>
+    <a href="/logout" class="btn2 btn2-secondary">Logout</a>
   </div>
 <% } else { %>
     <div class="header-content">

@@ -29,16 +29,43 @@ app.use(session({
 }));
 
 
+//Middleware
+
+function requireLogin(req,res,next)
+{
+    if(!req.session.userId)
+        res.redirect('/');
+    else
+        next();
+}
+
+function redirectLogin(req,res,next)
+{
+    if(req.session.userId)
+        res.redirect('/products');
+    else
+        next();
+}
+
+//Logout
+
+app.get('/logout',(req,res) => {
+    req.session.destroy(err =>{
+        if (err) console.log(err);
+        res.redirect('/');
+    });
+});
+
 
 //Landing
 
-app.get("/", (req,res) => {
+app.get("/",redirectLogin,(req,res) => {
     res.render("landing", { session: req.session });
 });
 
 //Login
 
-app.get("/login", (req,res) => {
+app.get("/login", redirectLogin, (req,res) => {
     res.render("login");
 });
 
@@ -68,7 +95,7 @@ app.post("/login",(req,res) =>{
 
 //Sign Up
 
-app.get("/signup", (req,res) => {
+app.get("/signup", redirectLogin, (req,res) => {
     res.render("signup");
 });
 
@@ -97,7 +124,7 @@ app.post("/signup",(req,res) =>{
 
 //Products
 
-app.get("/products", (req,res) => {
+app.get("/products", requireLogin, (req,res) => {
     res.render("products", { session: req.session });
 });
 
