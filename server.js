@@ -128,10 +128,112 @@ app.post("/signup",(req,res) =>{
 
 //Products
 
-app.get("/products", requireLogin, (req,res) => {
-    res.render("products", { session: req.session });
+app.get("/products", requireLogin, (req, res) => {
+    const userId = req.session.userId;
+
+    const query = `
+        SELECT * FROM products
+        WHERE user_id = ?
+    `;
+
+    connection.query(query, [userId], (err, products) => {
+        if (err) {
+            console.error(err);
+            return res.render("error", { message: "Error loading products" });
+        }
+        res.render("products", { products, session: req.session , activePage: "products"});
+    });
 });
 
+app.post("/products/add", requireLogin, (req,res) => {
+    const { productName, category, retailPrice, wholesalePrice, quantity } = req.body;
+    const userId = req.session.userId;
+
+    const insertProduct = `
+        INSERT INTO products (user_id, product_name, category, retail_price, wholesale_price, quantity)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    connection.query(insertProduct, [userId, productName, category, retailPrice, wholesalePrice, quantity], (err, results) => {
+        if(err) {
+            console.error(err);
+            return res.json({ success: false });
+        }
+        return res.json({ success: true });
+    });
+});
+
+app.post("/products/edit", requireLogin, (req,res) =>
+{
+     const { productId, retailPrice, wholesalePrice, quantity } = req.body;
+    const userId = req.session.userId;
+
+    const updateProduct = `
+        UPDATE products
+        SET retail_price = ?, wholesale_price = ?, quantity = ?
+        WHERE id = ? AND user_id = ?
+    `;
+
+    connection.query(updateProduct, [retailPrice, wholesalePrice, quantity, productId, userId], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.json({ success: false });
+        }
+
+        return res.json({ success: true });
+    });
+});
+
+app.post("/products/delete", requireLogin, (req, res) => {
+    const { productId } = req.body;
+    const userId = req.session.userId;
+
+    const deleteProduct = `
+        DELETE FROM products
+        WHERE product_id = ? AND user_id = ?
+    `;
+
+    connection.query(deleteProduct, [productId, userId], (err) => {
+        if (err) {
+            console.error(err);
+            return res.json({ success: false });
+        }
+
+        return res.json({ success: true });
+    });
+});
+
+
+//Orders
+
+app.get("/orders", requireLogin, (req, res) => {
+    const userId = req.session.userId;
+    const query = ``;
+
+    connection.query(query, [userId], (err, products) => {
+        if (err) {
+            console.error(err);
+            return res.render("error", { message: "Error loading orders" });
+        }
+        res.render("orders", { products, session: req.session, activePage: "orders" });
+    });
+});
+
+//Transactions
+
+app.get("/transactions", requireLogin, (req, res) => {
+    const userId = req.session.userId;
+
+    const query = ``;
+
+    connection.query(query, [userId], (err, orders) => {
+        if (err) {
+            console.error(err);
+            return res.render("error", { message: "Error loading transactions" });
+        }
+        res.render("transactions", { transactions, session:req.session, activePage: "transactions"});
+    });
+});
 
 
 //start localhost

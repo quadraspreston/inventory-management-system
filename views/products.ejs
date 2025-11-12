@@ -1,84 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inventory | Products</title>
-<link rel="stylesheet" href="/partials/header.css">
-<link rel="stylesheet" href="/products/products.css">
-<link rel="stylesheet" href="/partials/footer.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory | My Products</title>
+    <link rel="stylesheet" href="/partials/header.css">
+    <link rel="stylesheet" href="/products/products.css">
+    <link rel="stylesheet" href="/partials/footer.css">
 </head>
 <body>
     <%- include('partials/header') %>
-    <section class="product-section" id="productSection">
-        <div class="product-container">
-
-            <h2>My Products</h2>
-
-            <div class="top-bar">
-                <button onclick="addProduct()" class="btn">Add Product</button>
-                  <input type="text" placeholder="Search">
+    <div class="container">
+        <section id="inventorySection">
+            <div class="sectionHeader">
+                <h1>My Products</h1>
+                <button id="addProductBtn" class="btn">Add Product</button>
             </div>
 
-            <table>
+            <table id="inventoryTable">
                 <thead>
                     <tr>
-                        <th>Product Name</th>
+                        <th> </th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Retail Price (₹)</th>
+                        <th>Wholesale Price (₹)</th>
                         <th>Category</th>
-                        <th>Retail Rate</th>
-                        <th>Wholesale Rate</th>
-                        <th>Stock</th>
-                        <th>Image</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-
-                <tbody id="productList">
-                    <tr>
-                        <td>Lenovo Smartchoice LOQ AMD Ryzen 7 7435HS, NVIDIA RTX 4050-6GB, 24GB RAM, 512GB SSD, 15.6"/39.6cm, Windows 11, MS Office Home 2024, Grey, 2.4Kg, 83JC00EGIN, 100% sRGB, 3 Mon. Game Pass Gaming Laptop</td>
-                        <td>Laptops</td>
-                        <td>₹1,09,000.00</td>
-                        <td>₹98,000.00</td>
-                        <td>4</td>
-                        <td><button class="btn">+ Image</button></td>
-                        <td>
-                            <div class="dropdown">
-                                <button onclick="openMenu(this)" class="btn small">⋮</button>
-                                <div class="dropdown-menu">
-                                    <a>Edit</a>
-                                    <a>Barcode</a>
-                                    <a class="danger">Delete</a>
-                                </div>
-                            </div>
+                <tbody id="inventoryBody">
+                    <% if (products && products.length) { %>
+                        <% products.forEach((product,index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= product.product_name %></td>
+                                <td><%= product.quantity %></td>
+                                <td><%= product.retail_price %></td>
+                                <td><%= product.wholesale_price %></td>
+                                <td><%= product.category %></td>
+                                <td>
+                                    <button class="btn editBtn">Edit</button>
+                                    <button class="btn btnSecondary deleteBtn">Delete</button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="7">No Products to Display</td></tr>
+                    <% } %>
                 </tbody>
             </table>
+        </section>
+    </div>
+
+    <!-- Popup Modal for Add/Edit Product -->
+    <div id="addProductOverlay" class="hidden">
+        <div class="popup">
+            <h2 id="formTitle">Add Product</h2>
+            <form id="itemForm">
+                <label for="itemName">Item Name:</label>
+                <input type="text" id="itemName" required>
+
+                <label for="itemQuantity">Quantity:</label>
+                <input type="number" id="itemQuantity" min="1" required>
+
+                <label for="itemRetailPrice">Retail Price (₹):</label>
+                <input type="number" id="itemRetailPrice" step="0.01" min="0" required>
+
+                <label for="itemWholesalePrice">Wholesale Price (₹):</label>
+                <input type="number" id="itemWholesalePrice" step="0.01" min="0" required>
+
+                <label for="itemCategory">Category:</label>
+                <select id="itemCategory" required>
+                    <option value="">Select Category</option>
+                    <option value="Laptop">Laptop</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Tablet">Tablet</option>
+                    <option value="Accessory">Accessory</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <div class="formButtons">
+                    <button type="submit" id="addBtn" class="btn">Add</button>
+                    <button type="button" id="cancelBtn" class="btn btnSecondary">Cancel</button>
+                </div>
+            </form>
         </div>
-    </section>
-    
-<section id="addProductSection" class="form-section add-product-section invisible">
-<div class="form-container">
-    <h2>Add Product</h2>
+    </div>
+    <%- include('partials/footer') %>
 
-    <label>Name</label>
-    <input type="text" id="name">
-
-    <label>Description</label>
-    <textarea id="description"></textarea>
-
-    <label>Retail Rate</label>
-    <input type="number" id="retail">
-
-    <label>Wholesale Rate</label>
-    <input type="number" id="wholesale">
-
-    
-
-    
-    <button class="btn" onclick="saveProduct()">Add</button>
-    <button class="btn" onclick="cancel()">Cancel</button>
-</div>
-</section>
-<%- include('partials/footer') %>
-<script src="/products/products.js"></script>
+    <script src="/products/products.js"></script>
 </body>
 </html>

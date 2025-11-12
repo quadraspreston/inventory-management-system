@@ -7,7 +7,7 @@
 <% if (session.userId) {%>
   <div class="header-content">
     <h3>Hello, <%= session.userName ? session.userName : 'Guest' %></h3>
-    <a href="/logout" class="btn2 btn2-secondary">Logout</a>
+    <a href="/logout" id="logoutBtn" onclick="verify(event)" class="btn2 btn2-secondary">Logout</a>
   </div>
 <% } else { %>
     <div class="header-content">
@@ -16,3 +16,11 @@
   </div>
 <% } %>
 </header>
+
+<script>
+  function verify(event){
+ if (!confirm('Are you sure you want to Log out?')){
+  event.preventDefault();
+  return;
+  }};
+ </script>
