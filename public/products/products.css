@@ -85,7 +85,7 @@
         }
 
         /* Popup Modal Overlay */
-        #addProductOverlay {
+        #addProductOverlay, #editProductOverlay {
           position: fixed;
           top: 0;
           left: 0;

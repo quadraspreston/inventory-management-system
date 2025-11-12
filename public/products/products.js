@@ -9,6 +9,7 @@
         addProductBtn.addEventListener('click', () => {
             addProductOverlay.classList.remove('hidden');
         });
+        
 
         cancelBtn.addEventListener('click', () => {
             addProductOverlay.classList.add('hidden');
