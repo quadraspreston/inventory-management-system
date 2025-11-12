@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory | Order</title>
+    <link rel="stylesheet" href="/partials/header.css">
+    <link rel="stylesheet" href="/partials/sidebar.css">
+    <link rel="stylesheet" href="/orders/orders.css">
+    <link rel="stylesheet" href="/partials/footer.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+    <%- include('partials/sidebar') %>
+
+    <div class="container">
+        <section id="ordersSection">
+            <div class="sectionHeader">
+                <h1>Order</h1>
+            </div>
+
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Seller</th>
+                        <th>Retail Price (₹)</th>
+                        <th>Wholesale Price (₹)</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersBody">
+                    <% if (products && products.length) { %>
+                        <% products.forEach((product,index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= product.product_name %></td>
+                                <td><%= product.category %></td>
+                                <td><%= product.name %></td>
+                                <td><%= product.retail_price %></td>
+                                <td><%= product.wholesale_price %></td>
+                                <td><%= product.quantity %></td>
+                                <td>
+                                    <a href="/billing/<%= product.product_id %>" class="btn">Order</a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr><td colspan="8">No Products Available</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>

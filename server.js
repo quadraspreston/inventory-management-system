@@ -206,18 +206,98 @@ app.post("/products/delete", requireLogin, (req, res) => {
 
 //Orders
 
-app.get("/orders", requireLogin, (req, res) => {
+app.get('/orders', requireLogin, (req, res) => {
     const userId = req.session.userId;
-    const query = ``;
-
-    connection.query(query, [userId], (err, products) => {
+    
+    const query = `
+        SELECT products.*, users.user_id, users.name AS seller_name FROM products
+        JOIN users ON products.user_id = users.user_id 
+        WHERE products.user_id != ? AND quantity != 0
+    `;
+    
+    connection.query(query, [userId], (err, results) => {
         if (err) {
             console.error(err);
             return res.render("error", { message: "Error loading orders" });
         }
-        res.render("orders", { products, session: req.session, activePage: "orders" });
+        res.render('orders', { products: results,session: req.session, activePage: 'orders' });
     });
 });
+
+//Billing
+
+app.get("/billing/:productId", requireLogin, (req, res) => {
+    const userId = req.session.userId;
+    const productId = req.params.productId;
+
+    const query = `
+        SELECT product_id, product_name, category, retail_price, wholesale_price, quantity,
+        name AS seller_name
+        FROM products 
+        JOIN users ON users.user_id = products.user_id
+        WHERE product_id = ? AND products.user_id != ?
+    `;
+
+    connection.query(query, [productId, userId], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.render("error", { message: "An Unexpected Error has Occured" });
+        }
+
+        if (results.length === 0) {
+            return res.render("error", { message: "Product not found or cannot order your own product" });
+        }
+        const product = results[0];
+        res.render("billing", { product, session: req.session, activePage:"billing"}); 
+    });
+});
+
+app.post("/billing", requireLogin, (req, res) => {
+    const userId = req.session.userId;
+    const { productId, qty, totalPrice } = req.body;
+
+    if (!productId || !qty || qty <= 0 || !totalPrice) {
+        return res.json({ success: false, message: "Invalid order data" });
+    }
+
+    connection.beginTransaction(err =>{
+        if (err) return res.json({ success: false, message: "Transaction Failed" });
+    });
+
+    const query1 = `
+        INSERT INTO transactions (buyer_id, seller_id, product_name, category, unit_price, quantity, total_price, transaction_date)
+        SELECT ?, u.user_id, p.product_name, p.category,
+        CASE WHEN ?>=10 THEN p.wholesale_price ELSE p.retail_price END AS unit_price, ? AS quantity, ?, NOW() AS transaction_date
+        FROM products p
+        JOIN users u ON p.user_id = u.user_Id 
+        WHERE p.product_id = ?;
+    `;
+
+    connection.query(query1, [userId, qty, qty, totalPrice, productId], (err, result) => {
+        if (err) {
+            console.error(err);
+            return connection.rollback(() => res.json({ success: false, message: "Record Failed" }));
+        }
+        const query2 = ` UPDATE products 
+        SET quantity= quantity-?
+        WHERE product_id = ?;
+    `;
+
+    connection.query(query2, [qty, productId], (err, result) => {
+        if (err) {
+            console.error(err);
+            return connection.rollback(() => res.json({ success: false, message: "Failed to Update Stock" }));
+        }
+    connection.commit(err => {
+        if (err) {
+            return connection.rollback(() => res.json({ success: false, message: "Transaction Commit failed" }));
+        }
+        return res.json({ success: true});
+    });   
+});
+});
+});
+
 
 //Transactions
 

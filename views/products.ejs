@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory | My Products</title>
     <link rel="stylesheet" href="/partials/header.css">
+    <link rel="stylesheet" href="/partials/sidebar.css">
     <link rel="stylesheet" href="/products/products.css">
     <link rel="stylesheet" href="/partials/footer.css">
 </head>
 <body>
     <%- include('partials/header') %>
+    <%- include('partials/sidebar') %>
     <div class="container">
         <section id="inventorySection">
             <div class="sectionHeader">
@@ -20,7 +22,7 @@
             <table id="inventoryTable">
                 <thead>
                     <tr>
-                        <th> </th>
+                        <th>#</th>
                         <th>Name</th>
                         <th>Quantity</th>
                         <th>Retail Price (₹)</th>

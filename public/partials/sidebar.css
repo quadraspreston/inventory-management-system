@@ -1,0 +1,39 @@
+
+.sidebar {
+  border: 1px solid #ccc;
+  width: 220px;
+  height: 100%;
+  background-color: white;
+  padding: 20px;
+  position:fixed;
+}
+
+.sidebar p{
+  font-weight: bold;
+  text-align: center;
+}
+.sidebar a {
+  display: flex;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.sidebar a:hover {
+  background-color: #0446aa;
+  color:white;
+}
+
+ .sidebar a.active {
+    background-color: #1877f2;
+    color: white;
+    pointer-events: none; 
+    cursor: default;
+  }
+
+  .sidebar a.active:hover {
+    background-color: #1877f2; 
+  }
