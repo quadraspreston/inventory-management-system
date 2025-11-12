@@ -301,20 +301,47 @@ app.post("/billing", requireLogin, (req, res) => {
 
 //Transactions
 
-app.get("/transactions", requireLogin, (req, res) => {
-    const userId = req.session.userId;
+app.get('/transactions', requireLogin, (req, res) => {
+    const userId = req.session.userId; 
 
-    const query = ``;
+    const salesQuery = `
+        SELECT t.*, u.name AS buyer_name
+        FROM transactions t
+        JOIN users u ON t.buyer_id = u.user_id
+        WHERE t.seller_id = ?
+        ORDER BY t.transaction_date DESC
+    `;
 
-    connection.query(query, [userId], (err, orders) => {
+    // Query for purchases (products the user bought)
+    const purchasesQuery = `
+        SELECT t.*, u.name AS seller_name
+        FROM transactions t
+        JOIN users u ON t.seller_id = u.user_id
+        WHERE t.buyer_id = ?
+        ORDER BY t.transaction_date DESC
+    `;
+
+    connection.query(salesQuery, [userId], (err, salesData) => {
         if (err) {
             console.error(err);
-            return res.render("error", { message: "Error loading transactions" });
+            return res.sendStatus(500);
         }
-        res.render("transactions", { transactions, session:req.session, activePage: "transactions"});
+
+        connection.query(purchasesQuery, [userId], (err, purchaseData) => {
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500);
+            }
+
+            res.render('transactions', {
+                session: req.session,
+                sales: salesData,
+                purchases: purchaseData,
+                activePage: 'transactions'
+            });
+        });
     });
 });
-
 
 //start localhost
 

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory | Transactions</title>
+    <link rel="stylesheet" href="/partials/header.css">
+    <link rel="stylesheet" href="/partials/sidebar.css">
+    <link rel="stylesheet" href="/transactions/transactions.css">
+    <link rel="stylesheet" href="/partials/footer.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <%- include('partials/sidebar') %>
+
+    <div class="container">
+
+        <section class="sectionHeader">
+            <h1>Transactions</h1>
+        </section>
+
+        <!-- sales Items Table -->
+        <h2>Product Sales</h2>
+        <table id="inventoryTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Buyer</th>
+                    <th>Qty</th>
+                    <th>Unit Price (₹)</th>
+                    <th>Total (₹)</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if(sales && sales.length) { %>
+                    <% sales.forEach((item,index) => { %>
+                        <tr>
+                            <td><%= index+1 %></td>
+                            <td><%= item.product_name %></td>
+                            <td><%= item.category %></td>
+                            <td><%= item.buyer_name %></td>
+                            <td><%= item.quantity %></td>
+                            <td><%= item.unit_price %></td>
+                            <td><%= item.total_price %></td>
+                            <td><%= item.transaction_date.toLocaleString() %></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="8">No sold Products to display</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+
+        <!-- purchases Items Table -->
+        <h2>Product Purchases</h2>
+        <table id="inventoryTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Seller</th>
+                    <th>Qty</th>
+                    <th>Unit Price (₹)</th>
+                    <th>Total (₹)</th>
+                    <th>Date</th>
+                    <th>Bill</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if(purchases && purchases.length) { %>
+                    <% purchases.forEach((item,index) => { %>
+                        <tr>
+                            <td><%= index+1 %></td>
+                            <td><%= item.product_name %></td>
+                            <td><%= item.category %></td>
+                            <td><%= item.seller_name %></td>
+                            <td><%= item.quantity %></td>
+                            <td><%= item.unit_price %></td>
+                            <td><%= item.total_price %></td>
+                            <td><%= item.transaction_date.toLocaleString() %></td>
+                            <td>
+                                <a href="/billing/<%= item.transaction_id %>" class="btn btnSecondary">Generate Bill</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="9">No bought Products to display</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>
