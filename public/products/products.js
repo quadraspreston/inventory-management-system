@@ -1,22 +1,22 @@
- // Elements
         const addProductBtn = document.getElementById('addProductBtn');
         const addProductOverlay = document.getElementById('addProductOverlay');
         const cancelBtn = document.getElementById('cancelBtn');
         const itemForm = document.getElementById('itemForm');
         const inventoryBody = document.getElementById('inventoryBody');
+        const deleteBtn =document.getElementById("deleteBtn");
 
-        // Open popup
+        
         addProductBtn.addEventListener('click', () => {
             addProductOverlay.classList.remove('hidden');
         });
 
-        // Close popup
         cancelBtn.addEventListener('click', () => {
             addProductOverlay.classList.add('hidden');
             itemForm.reset();
         });
 
-        // Handle form submit
+
+
         itemForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const productData = {
@@ -36,7 +36,6 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    // Optionally reload table or append new row
                     location.reload();
                 } else {
                     alert('Failed to add product');
@@ -45,3 +44,30 @@
                 alert('Request failed');
             }
         });
+
+
+        async function deleteProduct(productId,e)
+        {   
+           
+            if (!confirm('Proceed with Product Deletion?')){
+            e.preventDefault();
+            return;
+            }
+            try {
+                const response = await fetch('/products/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({productId})
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete product');
+                }
+            } catch (err) {
+                alert('Request failed');
+            }
+        };
+        

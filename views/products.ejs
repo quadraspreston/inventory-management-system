@@ -41,10 +41,10 @@
                                 <td><%= product.category %></td>
                                 <td>
                                     <button class="btn editBtn">Edit</button>
-                                    <button class="btn btnSecondary deleteBtn">Delete</button>
+                                    <button class="btn btnSecondary" onclick="deleteProduct(`<%= product.product_id %>`,event)">Delete</button>
                                 </td>
                             </tr>
-                        <% }) %>
+                        <% }); %>
                     <% } else { %>
                         <tr><td colspan="7">No Products to Display</td></tr>
                     <% } %>
