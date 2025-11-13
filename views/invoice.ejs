@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice | <%= transaction.transaction_id %></title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #fff;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #eee;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+      border-collapse: collapse;
+    }
+    .invoice-box table td {
+      padding: 5px;
+      vertical-align: top;
+    }
+    .invoice-box table tr.top table td {
+      padding-bottom: 20px;
+    }
+    .invoice-box table tr.top table td.title {
+      font-size: 45px;
+      line-height: 45px;
+      color: #333;
+    }
+    .invoice-box table tr.information table td {
+      padding-bottom: 20px;
+    }
+    .invoice-box table tr.heading td {
+      background: #f9f9f9;
+      border-bottom: 1px solid #ddd;
+      font-weight: 600;
+    }
+    .invoice-box table tr.details td {
+      padding-bottom: 20px;
+    }
+    .invoice-box table tr.item td {
+      border-bottom: 1px solid #eee;
+    }
+    .invoice-box table tr.item.last td {
+      border-bottom: none;
+    }
+    .invoice-box table tr.total td:nth-child(2) {
+      border-top: 2px solid #eee;
+      font-weight: 700;
+    }
+
+    @media print {
+        #invoice-box {
+            position: absolute;
+            left:0;
+            top:0;
+            width:100%;
+        }
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-box">
+    <table>
+      <tr class="top">
+        <td colspan="2">
+          <table>
+            <tr>
+              <td>
+                Invoice #: <%= transaction.transaction_id %><br>
+                Created: <%= transaction.transaction_date.toLocaleString() %><br>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr class="information">
+        <td colspan="2">
+          <table>
+            <tr>
+              <td>
+                Seller Name:
+                <%= transaction.seller_name %><br>
+              </td>
+
+              <td>
+                Buyer Name:
+                <%= transaction.buyer_name %><br>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr class="heading">
+        <td>Item</td>
+        <td>Details</td>
+      </tr>
+
+      <tr class="item">
+        <td>Product</td>
+        <td><%= transaction.product_name %></td>
+      </tr>
+
+      <tr class="item">
+        <td>Category</td>
+        <td><%= transaction.category %></td>
+      </tr>
+
+      <tr class="item">
+        <td>Unit Price (₹)</td>
+        <td><%= transaction.unit_price %></td>
+      </tr>
+
+      <tr class="item">
+        <td>Quantity</td>
+        <td><%= transaction.quantity %></td>
+      </tr>
+
+      <tr class="item last">
+        <td>Total Price (₹)</td>
+        <td><%= transaction.total_price %></td>
+      </tr>
+
+      <tr class="total">
+        <td></td>
+        <td>Grand Total: ₹ <%= transaction.total_price %></td>
+  
+    </table>
+  </div>
+</body>
+</html>

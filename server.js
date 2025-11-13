@@ -5,6 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 const express = require("express");
 const session = require('express-session');
 const path = require("path");
+const pdf = require('html-pdf');
+const key='superSecretKey_12345!@#$%_changeThisLater';
 
 
 
@@ -23,7 +25,7 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname,'public')));
 app.use(express.json());
 app.use(session({
-    secret: 'superSecretKey_12345!@#$%_changeThisLater', 
+    secret: key, 
     resave: false,
     saveUninitialized: false
 }));
@@ -34,17 +36,15 @@ app.use(session({
 function requireLogin(req,res,next)
 {
     if(!req.session.userId)
-        res.redirect('/');
-    else
-        next();
+        return res.redirect('/');
+     next();
 }
 
 function redirectLogin(req,res,next)
 {
     if(req.session.userId)
-        res.redirect('/products');
-    else
-        next();
+         return res.redirect('/products');
+    next();
 }
 
 //Logout
@@ -53,6 +53,45 @@ app.get('/logout',(req,res) => {
     req.session.destroy(err =>{
         if (err) console.log(err);
         res.redirect('/');
+    });
+});
+
+//Invoice
+
+app.get('/invoice/:transactionId', requireLogin, (req, res) => {
+  const transactionId = req.params.transactionId;
+
+  const query = `
+    SELECT t.transaction_id, t.product_name, t.category, t.unit_price, t.quantity, t.total_price, t.transaction_date,
+           buyer.name AS buyer_name, seller.name AS seller_name,
+           t.buyer_id, t.seller_id
+    FROM transactions t
+    JOIN users buyer ON t.buyer_id = buyer.user_id
+    JOIN users seller ON t.seller_id = seller.user_id
+    WHERE t.transaction_id = ?;
+  `
+
+  connection.query(query, [transactionId], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Server Error');
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send('Transaction not found');
+    }
+
+    const transaction = results[0];
+
+    res.render('invoice', { transaction}, (err,html) => {
+        if(err) return res.sendStatus(500);
+
+        pdf.create(html).toBuffer((err,buffer) =>{
+            res.type('pdf');
+            res.setHeader('Content-Disposition',`attachment; filename=invoice.pdf`);
+            res.send(buffer);
+        });       
+    }); 
     });
 });
 
@@ -74,13 +113,13 @@ app.post("/login",(req,res) =>{
 
     const query = `SELECT * FROM users WHERE email = ?`;
     connection.query(query, [email], (err, results) => {
-        if (err) throw err;
+        if (err) return res.status(500).json({success:false});
         if (results.length === 0) {
             return res.json({ success: false, message: 'Invalid email or password' });
         }
         const user=results[0];
         bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (err) throw err;
+            if (err) return res.status(500).json({success:false});
 
             if (isMatch) {
                 req.session.userId = user.user_id;
@@ -102,7 +141,7 @@ app.get("/signup", redirectLogin, (req,res) => {
 app.post("/signup",(req,res) =>{
     const {name, email, password} = req.body;
     bcrypt.hash(password,10,(err,hashPassword) => {
-        if(err) throw err;
+        if (err) return res.status(500).json({success:false});
     const userId = uuidv4();
     const insertUser = `
             INSERT INTO users (user_id, name, email, password)
@@ -115,7 +154,7 @@ app.post("/signup",(req,res) =>{
                 if (err.code === 'ER_DUP_ENTRY' && err.sqlMessage.includes('email')) {
                     return res.json({ success: false, emailExists: true });
                 }
-                throw err;
+                return res.status(500).json({success:false});
             }
             else {
             req.session.userId = userId;
@@ -139,7 +178,7 @@ app.get("/products", requireLogin, (req, res) => {
     connection.query(query, [userId], (err, products) => {
         if (err) {
             console.error(err);
-            return res.render("error", { message: "Error loading products" });
+            return res.json({success:false,message: "Error loading products" });
         }
         res.render("products", { products, session: req.session , activePage: "products"});
     });
@@ -163,26 +202,6 @@ app.post("/products/add", requireLogin, (req,res) => {
     });
 });
 
-app.post("/products/edit", requireLogin, (req,res) =>
-{
-     const { productId, retailPrice, wholesalePrice, quantity } = req.body;
-    const userId = req.session.userId;
-
-    const updateProduct = `
-        UPDATE products
-        SET retail_price = ?, wholesale_price = ?, quantity = ?
-        WHERE id = ? AND user_id = ?
-    `;
-
-    connection.query(updateProduct, [retailPrice, wholesalePrice, quantity, productId, userId], (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.json({ success: false });
-        }
-
-        return res.json({ success: true });
-    });
-});
 
 app.post("/products/delete", requireLogin, (req, res) => {
     const { productId } = req.body;
@@ -218,7 +237,7 @@ app.get('/orders', requireLogin, (req, res) => {
     connection.query(query, [userId], (err, results) => {
         if (err) {
             console.error(err);
-            return res.render("error", { message: "Error loading orders" });
+            return res.json({success:false, message: "Error loading orders" });
         }
         res.render('orders', { products: results,session: req.session, activePage: 'orders' });
     });
@@ -241,11 +260,11 @@ app.get("/billing/:productId", requireLogin, (req, res) => {
     connection.query(query, [productId, userId], (err, results) => {
         if (err) {
             console.error(err);
-            return res.render("error", { message: "An Unexpected Error has Occured" });
+            return res.json({success:false, message: "Error has Occured" });
         }
 
         if (results.length === 0) {
-            return res.render("error", { message: "Product not found or cannot order your own product" });
+            return res.json({success:false, message: "Product not found or cannot enter your own Product" });
         }
         const product = results[0];
         res.render("billing", { product, session: req.session, activePage:"billing"}); 
@@ -312,7 +331,6 @@ app.get('/transactions', requireLogin, (req, res) => {
         ORDER BY t.transaction_date DESC
     `;
 
-    // Query for purchases (products the user bought)
     const purchasesQuery = `
         SELECT t.*, u.name AS seller_name
         FROM transactions t
@@ -342,6 +360,8 @@ app.get('/transactions', requireLogin, (req, res) => {
         });
     });
 });
+
+
 
 //start localhost
 

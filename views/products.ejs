@@ -42,7 +42,6 @@
                                 <td><%= product.wholesale_price %></td>
                                 <td><%= product.category %></td>
                                 <td>
-                                    <button class="btn editBtn">Edit</button>
                                     <button class="btn btnSecondary" onclick="deleteProduct(`<%= product.product_id %>`,event)">Delete</button>
                                 </td>
                             </tr>
@@ -55,7 +54,7 @@
         </section>
     </div>
 
-    <!-- Popup Modal for Add/Edit Product -->
+
     <div id="addProductOverlay" class="hidden">
         <div class="popup">
             <h2 id="formTitle">Add Product</h2>
