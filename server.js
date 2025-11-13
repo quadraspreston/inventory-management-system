@@ -6,8 +6,8 @@ const express = require("express");
 const session = require('express-session');
 const path = require("path");
 const pdf = require('html-pdf');
-const key='superSecretKey_12345!@#$%_changeThisLater';
-
+const crypto = require('crypto');
+const key = crypto.randomBytes(32).toString('hex');
 
 
 //Initialization
@@ -88,7 +88,7 @@ app.get('/invoice/:transactionId', requireLogin, (req, res) => {
 
         pdf.create(html).toBuffer((err,buffer) =>{
             res.type('pdf');
-            res.setHeader('Content-Disposition',`attachment; filename=invoice.pdf`);
+            res.setHeader('Content-Disposition',`inline; filename=invoice.pdf`);
             res.send(buffer);
         });       
     }); 
