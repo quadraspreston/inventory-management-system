@@ -231,7 +231,7 @@ app.get('/orders', requireLogin, (req, res) => {
     const query = `
         SELECT products.*, users.user_id, users.name AS seller_name FROM products
         JOIN users ON products.user_id = users.user_id 
-        WHERE products.user_id != ? AND quantity != 0
+        WHERE products.user_id != ? AND quantity > 0
     `;
     
     connection.query(query, [userId], (err, results) => {

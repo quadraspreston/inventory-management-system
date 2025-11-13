@@ -10,7 +10,7 @@ orderQty.addEventListener('input', ()=>{
 
 const orderBtn = document.getElementById("orderBtn");
 
-orderBtn.addEventListener("click", async (e) => {
+orderBtn.addEventListener("submit", async (e) => {
     e.preventDefault(); 
     try {
         const response = await fetch("/billing", {

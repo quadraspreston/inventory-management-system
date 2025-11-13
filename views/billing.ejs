@@ -28,7 +28,7 @@
       <input type="hidden" name="productRetailPrice" id="productRetailPrice" value="<%= product.retail_price %>">
       <input type="hidden" name="productWholesalePrice" id="productWholesalePrice" value="<%= product.wholesale_price %>">
       <label for="orderQty">Quantity</label>
-      <input type="number" id="orderQty" name="quantity" min="1" max="<%= product.quantity %>" required>
+      <input type="number" id="orderQty" name="quantity" min="1" max= "<%= product.quantity %>" required>
 
       <label for="totalPrice">Total Price (₹)</label>
       <input type="text" id="totalPrice" name="totalPrice" value="0" readonly>
