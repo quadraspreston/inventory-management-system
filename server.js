@@ -66,7 +66,7 @@ app.get('/logout',(req,res) => {
 
 app.get('/invoice/:transactionId', requireLogin, (req, res) => {
   const transactionId = req.params.transactionId;
-  const user_id = req.session.userId;
+  const userId = req.session.userId;
 
   const query = `
     SELECT t.transaction_id, t.product_name, t.category, t.unit_price, t.quantity, t.total_price, t.transaction_date,
@@ -78,7 +78,7 @@ app.get('/invoice/:transactionId', requireLogin, (req, res) => {
     WHERE t.transaction_id = ? AND (t.buyer_id = ? OR t.seller_id = ?);
   `
 
-  connection.query(query, [transactionId, user_id, user_id], (err, results) => {
+  connection.query(query, [transactionId, userId, userId], (err, results) => {
     if (err) {
       console.error(err);
       return res.status(500).send('Server Error');
@@ -289,9 +289,9 @@ app.get("/billing/:productId", requireLogin, (req, res) => {
 
 app.post("/billing", requireLogin, (req, res) => {
     const userId = req.session.userId;
-    const { productId, qty, totalPrice } = req.body;
+    const { productId, qty} = req.body;
 
-    if (!productId || !qty || qty <= 0 || !totalPrice) {
+    if (!productId || !qty || qty <= 0) {
         return res.json({ success: false, message: "Invalid order data" });
     }
 
@@ -302,27 +302,34 @@ app.post("/billing", requireLogin, (req, res) => {
     const query1 = `
         INSERT INTO transactions (buyer_id, seller_id, product_name, category, unit_price, quantity, total_price, transaction_date)
         SELECT ?, u.user_id, p.product_name, p.category,
-        CASE WHEN ?>=10 THEN p.wholesale_price ELSE p.retail_price END AS unit_price, ? AS quantity, ?, NOW() AS transaction_date
+        CASE WHEN ?>=10 THEN p.wholesale_price ELSE p.retail_price END AS unit_price, ? AS quantity,
+        ?*(CASE WHEN ?>=10 THEN p.wholesale_price ELSE p.retail_price END), NOW() AS transaction_date
         FROM products p
-        JOIN users u ON p.user_id = u.user_Id 
-        WHERE p.product_id = ?;
+        JOIN users u ON p.user_id = u.user_id 
+        WHERE p.product_id = ? AND quantity >= ?;
     `;
 
-    connection.query(query1, [userId, qty, qty, totalPrice, productId], (err, result) => {
+    connection.query(query1, [userId, qty, qty, qty, qty, productId, qty], (err, result) => {
         if (err) {
             console.error(err);
             return connection.rollback(() => res.json({ success: false, message: "Record Failed" }));
         }
+        if (result.affectedRows === 0) {
+            return connection.rollback(() => res.json({ success: false, message: "Insufficient Stock or Invalid Product" }));
+        }
         const query2 = ` UPDATE products 
         SET quantity= quantity-?
-        WHERE product_id = ?;
+        WHERE product_id = ? AND quantity >= ?;
     `;
 
-    connection.query(query2, [qty, productId], (err, result) => {
+    connection.query(query2, [qty, productId, qty], (err, result) => {
         if (err) {
             console.error(err);
             return connection.rollback(() => res.json({ success: false, message: "Failed to Update Stock" }));
         }
+        if (result.affectedRows === 0) {
+            return connection.rollback(() => res.json({ success: false, message: "Product not found" }));
+        }   
     connection.commit(err => {
         if (err) {
             return connection.rollback(() => res.json({ success: false, message: "Transaction Commit failed" }));

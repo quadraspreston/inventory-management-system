@@ -8,9 +8,9 @@ orderQty.addEventListener('input', ()=>{
     totalPrice.value=qty>=10?(qty*productWholesalePrice).toFixed(2):(qty*productRetailPrice).toFixed(2);
 });
 
-const orderBtn = document.getElementById("orderBtn");
+const billingForm = document.getElementById("billingForm");
 
-orderBtn.addEventListener("submit", async (e) => {
+billingForm.addEventListener("submit", async (e) => {
     e.preventDefault(); 
     try {
         const response = await fetch("/billing", {
