@@ -66,6 +66,7 @@ app.get('/logout',(req,res) => {
 
 app.get('/invoice/:transactionId', requireLogin, (req, res) => {
   const transactionId = req.params.transactionId;
+  const user_id = req.session.userId;
 
   const query = `
     SELECT t.transaction_id, t.product_name, t.category, t.unit_price, t.quantity, t.total_price, t.transaction_date,
@@ -74,25 +75,34 @@ app.get('/invoice/:transactionId', requireLogin, (req, res) => {
     FROM transactions t
     JOIN users buyer ON t.buyer_id = buyer.user_id
     JOIN users seller ON t.seller_id = seller.user_id
-    WHERE t.transaction_id = ?;
+    WHERE t.transaction_id = ? AND (t.buyer_id = ? OR t.seller_id = ?);
   `
 
-  connection.query(query, [transactionId], (err, results) => {
+  connection.query(query, [transactionId, user_id, user_id], (err, results) => {
     if (err) {
       console.error(err);
       return res.status(500).send('Server Error');
     }
 
     if (results.length === 0) {
-      return res.status(404).send('Transaction not found');
+      const checkQuery = `SELECT transaction_id FROM transactions WHERE transaction_id = ?`;
+      connection.query(checkQuery, [transactionId], (err, checkResults) => {
+          if (checkResults.length === 0) {
+              return res.status(404).send('Transaction not found');
+          } else {
+              return res.status(403).send('Unauthorized - You cannot access this transaction');
+          }
+      });
+      return;
     }
 
     const transaction = results[0];
 
     res.render('invoice', { transaction}, (err,html) => {
-        if(err) return res.sendStatus(500);
+        if(err) return res.status(500).send('Error generating invoice');
 
         pdf.create(html).toBuffer((err,buffer) =>{
+            if(err) return res.status(500).send('PDF generation failed');
             res.type('pdf');
             res.setHeader('Content-Disposition',`inline; filename=invoice.pdf`);
             res.send(buffer);
