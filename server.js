@@ -20,6 +20,12 @@ const connection = mysql.createConnection({
   database: 'inventory'
 });
 
+connection.connect((err) => {
+    if (err) {
+        console.error('Database connection failed:', err.code);
+        process.exit(1);
+    }
+});
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname,'public')));
