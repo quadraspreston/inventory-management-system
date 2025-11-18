@@ -13,6 +13,10 @@ const key = crypto.randomBytes(32).toString('hex');
 //Initialization
 const app = express();
 
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname,'public')));
+app.use(express.json());
+
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -27,9 +31,6 @@ connection.connect((err) => {
     }
 });
 
-app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname,'public')));
-app.use(express.json());
 app.use(session({
     secret: key, 
     resave: false,
@@ -61,56 +62,6 @@ app.get('/logout',(req,res) => {
         res.redirect('/');
     });
 });
-
-//Invoice
-
-app.get('/invoice/:transactionId', requireLogin, (req, res) => {
-  const transactionId = req.params.transactionId;
-  const userId = req.session.userId;
-
-  const query = `
-    SELECT t.transaction_id, t.product_name, t.category, t.unit_price, t.quantity, t.total_price, t.transaction_date,
-           buyer.name AS buyer_name, seller.name AS seller_name,
-           t.buyer_id, t.seller_id
-    FROM transactions t
-    JOIN users buyer ON t.buyer_id = buyer.user_id
-    JOIN users seller ON t.seller_id = seller.user_id
-    WHERE t.transaction_id = ? AND (t.buyer_id = ? OR t.seller_id = ?);
-  `
-
-  connection.query(query, [transactionId, userId, userId], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Server Error');
-    }
-
-    if (results.length === 0) {
-      const checkQuery = `SELECT transaction_id FROM transactions WHERE transaction_id = ?`;
-      connection.query(checkQuery, [transactionId], (err, checkResults) => {
-          if (checkResults.length === 0) {
-              return res.status(404).send('Transaction not found');
-          } else {
-              return res.status(403).send('Unauthorized - You cannot access this transaction');
-          }
-      });
-      return;
-    }
-
-    const transaction = results[0];
-
-    res.render('invoice', { transaction}, (err,html) => {
-        if(err) return res.status(500).send('Error generating invoice');
-
-        pdf.create(html).toBuffer((err,buffer) =>{
-            if(err) return res.status(500).send('PDF generation failed');
-            res.type('pdf');
-            res.setHeader('Content-Disposition',`inline; filename=invoice.pdf`);
-            res.send(buffer);
-        });       
-    }); 
-    });
-});
-
 
 //Landing
 
@@ -180,6 +131,7 @@ app.post("/signup",(req,res) =>{
         });
     });
 });
+
 
 //Products
 
@@ -384,7 +336,54 @@ app.get('/transactions', requireLogin, (req, res) => {
     });
 });
 
+//Invoice
 
+app.get('/invoice/:transactionId', requireLogin, (req, res) => {
+  const transactionId = req.params.transactionId;
+  const userId = req.session.userId;
+
+  const query = `
+    SELECT t.transaction_id, t.product_name, t.category, t.unit_price, t.quantity, t.total_price, t.transaction_date,
+           buyer.name AS buyer_name, seller.name AS seller_name,
+           t.buyer_id, t.seller_id
+    FROM transactions t
+    JOIN users buyer ON t.buyer_id = buyer.user_id
+    JOIN users seller ON t.seller_id = seller.user_id
+    WHERE t.transaction_id = ? AND (t.buyer_id = ? OR t.seller_id = ?);
+  `
+
+  connection.query(query, [transactionId, userId, userId], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Server Error');
+    }
+
+    if (results.length === 0) {
+      const checkQuery = `SELECT transaction_id FROM transactions WHERE transaction_id = ?`;
+      connection.query(checkQuery, [transactionId], (err, checkResults) => {
+          if (checkResults.length === 0) {
+              return res.status(404).send('Transaction not found');
+          } else {
+              return res.status(403).send('Unauthorized - You cannot access this transaction');
+          }
+      });
+      return;
+    }
+
+    const transaction = results[0];
+
+    res.render('invoice', { transaction}, (err,html) => {
+        if(err) return res.status(500).send('Error generating invoice');
+
+        pdf.create(html).toBuffer((err,buffer) =>{
+            if(err) return res.status(500).send('PDF generation failed');
+            res.type('pdf');
+            res.setHeader('Content-Disposition',`inline; filename=invoice.pdf`);
+            res.send(buffer);
+        });       
+    }); 
+    });
+});
 
 //start localhost
 
