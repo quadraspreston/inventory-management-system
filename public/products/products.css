@@ -9,13 +9,13 @@
         body {
           background-color: white;
           line-height: 1.6;
-          min-height: 100vh;
         }
 
         .container {
           max-width: 1140px;
           margin: 0 auto;
-          padding: 60px 20px;
+          padding: 120px 20px;
+          min-height: 100vh;
         }
 
         .sectionHeader {

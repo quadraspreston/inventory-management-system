@@ -14,10 +14,11 @@ body {
   max-width: 1140px;
   margin: 0 auto;
   margin-top: 20px;
-  padding: 60px 20px;
+  padding: 120px 20px;
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #fff;
+  min-height: 100vh;
 }
 
 h1 {

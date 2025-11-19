@@ -10,10 +10,12 @@
      line-height: 1.6;
  }
 
+ 
  .container {
+    min-height: 100vh;
      max-width: 1140px;
      margin: 0 auto;
-     padding: 60px 20px;
+     padding: 120px 20px;
  }
 
  .sectionHeader {
