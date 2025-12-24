@@ -6,32 +6,39 @@ const express = require("express");
 const session = require('express-session');
 const path = require("path");
 const pdf = require('html-pdf');
-const crypto = require('crypto');
-const key = crypto.randomBytes(32).toString('hex');
+const dotenv = require('dotenv');
+
 
 //Initialization
+
+dotenv.config({ path: path.join(__dirname, 'inventory.env') });
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname,'public')));
 app.use(express.json());
+   
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'inventory'
-});
+    const connection = mysql.createPool({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0
+    });
 
-connection.connect((err) => {
-    if (err) {
-        console.error('Database connection failed:', err.code);
-        process.exit(1);
-    }
-});
+
+    connection.query('SELECT 1', (err) => {
+        if (err) {
+            console.error('Database connection failed:', err.code);
+            process.exit(1);
+        }
+    });
 
 app.use(session({
-    secret: key, 
+    secret: process.env.SESSION_SECRET, 
     resave: false,
     saveUninitialized: false
 }));
@@ -386,6 +393,6 @@ app.get('/invoice/:transactionId', requireLogin, (req, res) => {
 
 //start localhost
 
-app.listen(3000,()=>{
-    console.log(`Server Running on Port 3000`);
+app.listen(process.env.PORT || 3000,()=>{
+    console.log(`Server Running on Port ${process.env.PORT || 3000}`);
 });
